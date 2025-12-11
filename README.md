@@ -29,10 +29,9 @@ El punto de entrada principal es `index.html`.
 
 No se requiere instalación de dependencias ni servidores complejos (Node.js, NPM, etc.), ya que está construido con **HTML/CSS/JS Vanilla**.
 
-1. **Clona o descarga** este repositorio o usa github pages https://gatopobre.github.io/Presentacion_Javascript/index.html.
-2. Navega a la carpeta del proyecto.
-3. Haz doble clic en el archivo **`index.html`** para abrirlo en tu navegador web favorito (Chrome, Firefox, Edge, etc.).
-4. Usa el menú principal para navegar a los temas y el botón **"🏠 Volver"** en la esquina superior derecha de cada lección para regresar.
+1. **Usa github pages** https://gatopobre.github.io/Presentacion_Javascript/index.html.
+2. Usa el menú principal para navegar a los temas y el botón **"🏠 Volver"** en la esquina superior derecha de cada lección para regresar.
 
 ---
-*Desarrollado para facilitar la enseñanza y aprendizaje de JS moderno.*
+*Desarrollado con ♥ para facilitar la enseñanza y aprendizaje 😺 Pobre.*
+
