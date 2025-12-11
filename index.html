@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación JavaScript</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #fff;
+            --accent-color: #61dafb;
+            --hover-color: #4fa8c7;
+            --card-border: #444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 25px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 150px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border-color: var(--accent-color);
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Presentación JS</h1>
+        <div class="subtitle">Índice de Contenidos</div>
+    </header>
+
+    <div class="grid-container">
+        <a href="anonimas.html" class="card">
+            <div class="card-icon">🎭</div>
+            <h2>Funciones Anónimas</h2>
+        </a>
+        <a href="coercion.html" class="card">
+            <div class="card-icon">🔄</div>
+            <h2>Coerción</h2>
+        </a>
+        <a href="condicionales.html" class="card">
+            <div class="card-icon">🔀</div>
+            <h2>Condicionales</h2>
+        </a>
+        <a href="debug.html" class="card">
+            <div class="card-icon">🐛</div>
+            <h2>Debugging</h2>
+        </a>
+        <a href="desafios.html" class="card">
+            <div class="card-icon">🏆</div>
+            <h2>Desafíos</h2>
+        </a>
+        <a href="dom.html" class="card">
+            <div class="card-icon">🌳</div>
+            <h2>DOM</h2>
+        </a>
+        <a href="elevacion.html" class="card">
+            <div class="card-icon">🚀</div>
+            <h2>Elevación (Hoisting)</h2>
+        </a>
+        <a href="eventos.html" class="card">
+            <div class="card-icon">🖱️</div>
+            <h2>Eventos</h2>
+        </a>
+    </div>
+
+</body>
+</html>
