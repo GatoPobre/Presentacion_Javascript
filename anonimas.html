@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funciones Anónimas vs Arrow Functions</title>
+    <style>
+        /* Estilos Generales (Dark Mode) */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* Layout: Izquierda (Teoría/Botones) - Derecha (Consola) */
+        .left-panel {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tarjetas de explicación */
+        .card {
+            background: #2b2b2b;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #61dafb;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.arrow {
+            border-left-color: #d86cce;
+        }
+
+        /* Color diferente para Arrow */
+        .card.danger {
+            border-left-color: #ff5f5f;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        /* Bloques de código visual */
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #444;
+        }
+
+        code {
+            font-family: 'Consolas', monospace;
+            color: #9cdcfe;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        /* Botones */
+        button {
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #444;
+            border-color: #777;
+        }
+
+        button.action-btn {
+            background-color: #0e639c;
+            border: none;
+        }
+
+        button.action-btn:hover {
+            background-color: #1177bb;
+        }
+
+        /* Consola Simulada */
+        .console-box {
+            flex: 1;
+            background-color: #0c0c0c;
+            border: 2px solid #333;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            border-radius: 8px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 4px;
+        }
+
+        .log-result {
+            color: #4ec9b0;
+            font-weight: bold;
+        }
+
+        .log-undefined {
+            color: #888;
+            font-style: italic;
+        }
+
+        .log-error {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="left-panel">
+        <h1>Funciones en JS ⚡</h1>
+        <p>Abre la consola del navegador (F12) o mira la consola visual a la derecha.</p>
+
+        <div class="card">
+            <h2>1. Función Anónima (Clásica)</h2>
+            <p>No tiene nombre propio. Se suele guardar en una constante o usar como "Callback".</p>
+
+            <pre><code><span class="keyword">const</span> saludo = <span class="keyword">function</span>() {
+  <span class="keyword">return</span> <span class="string">"Hola desde anónima"</span>;
+}</code></pre>
+
+            <button class="action-btn" onclick="ejecutarAnonima()">👉 Ejecutar Anónima</button>
+            <button class="action-btn" onclick="ejecutarCallback()">👉 Usar como Callback (espera 2s)</button>
+        </div>
+
+        <div class="card arrow">
+            <h2>2. Arrow Function (Flecha)</h2>
+            <p>Sintaxis moderna (ES6). Más corta. Si es una sola línea, el <code>return</code> es implícito.</p>
+
+            <pre><code><span class="comment">// Retorno implícito (sin llaves)</span>
+<span class="keyword">const</span> sumar = (a, b) => a + b;</code></pre>
+
+            <button class="action-btn" onclick="ejecutarFlecha()">👉 Ejecutar Suma Flecha</button>
+            <button class="action-btn" onclick="transformarArray()">👉 Transformar Array (Map)</button>
+        </div>
+
+        <div class="card danger">
+            <h2>3. La Trampa del `this`</h2>
+            <p>Las funciones flecha <strong>NO</strong> tienen su propio <code>this</code>. Heredan el de afuera.</p>
+
+            <h3>Objeto de prueba:</h3>
+            <pre><code><span class="keyword">const</span> gato = {
+  nombre: <span class="string">"Garfield"</span>,
+  maullar: <span class="keyword">function</span>() { <span class="keyword">return</span> <span class="keyword">this</span>.nombre },
+  maullarFlecha: () => <span class="keyword">this</span>.nombre
+}</code></pre>
+
+            <button onclick="probarThisNormal()">🐱 Probar Normal (Funciona)</button>
+            <button onclick="probarThisFlecha()">🚫 Probar Flecha (Falla)</button>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div style="margin-bottom: 10px; font-weight: bold; color: #888;">CONSOLA VISUAL</div>
+        <div id="console-output" class="console-box">
+            <div class="log-entry" style="color: #666;">// Los resultados aparecerán aquí...</div>
+        </div>
+        <button onclick="limpiarConsola()" style="margin-top: 10px;">Limpiar Consola</button>
+    </div>
+
+    <script>
+        // ==========================================
+        // UTILIDADES (Para que funcione la consola visual)
+        // ==========================================
+        function log(msg, type = 'text') {
+            const box = document.getElementById('console-output');
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+
+            if (type === 'result') {
+                div.innerHTML = `<span style="color:#aaa;">Resultado:</span> <span class="log-result">${msg}</span>`;
+            } else if (type === 'error') {
+                div.innerHTML = `<span class="log-error">❌ ${msg}</span>`;
+            } else {
+                div.innerHTML = `> ${msg}`;
+            }
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function limpiarConsola() {
+            document.getElementById('console-output').innerHTML = '';
+        }
+
+        // ==========================================
+        // 1. LÓGICA DE FUNCIONES ANÓNIMAS
+        // ==========================================
+
+        // Expresión de función (Función anónima guardada en variable)
+        const funcionAnonima = function () {
+            return "¡Hola! Soy una función anónima clásica.";
+        };
+
+        function ejecutarAnonima() {
+            log("Ejecutando: const f = function() { ... }");
+            const resultado = funcionAnonima();
+            log(resultado, 'result');
+        }
+
+        function ejecutarCallback() {
+            log("Iniciando setTimeout de 2 segundos...");
+
+            // Aquí pasamos una función anónima directamente como argumento
+            setTimeout(function () {
+                log("⏰ ¡Han pasado 2 segundos! (Ejecutado desde callback anónimo)", 'result');
+            }, 2000);
+        }
+
+        // ==========================================
+        // 2. LÓGICA DE ARROW FUNCTIONS
+        // ==========================================
+
+        // Arrow function con retorno implícito
+        const sumarFlecha = (num1, num2) => num1 + num2;
+
+        function ejecutarFlecha() {
+            const a = 10;
+            const b = 50;
+            log(`Ejecutando Arrow: (${a}, ${b}) => ${a} + ${b}`);
+            const res = sumarFlecha(a, b);
+            log(res, 'result');
+        }
+
+        function transformarArray() {
+            const precios = [10, 20, 30];
+            log(`Array original: [${precios}]`);
+
+            // Uso clásico de Arrow Functions en .map
+            // Es mucho más limpio que usar function() { return ... }
+            const conImpuesto = precios.map(precio => precio * 1.19);
+
+            log("Ejecutando: precios.map(p => p * 1.19)");
+            log(`Array nuevo: [${conImpuesto.map(n => n.toFixed(2))}]`, 'result');
+        }
+
+        // ==========================================
+        // 3. COMPARACIÓN DE 'THIS'
+        // ==========================================
+
+        const gato = {
+            nombre: "Garfield",
+
+            // Método clásico: 'this' es el objeto 'gato'
+            maullar: function () {
+                return `El gato se llama: ${this.nombre}`;
+            },
+
+            // Arrow function: 'this' NO es el gato. 
+            // Es el contexto donde se creó el objeto (Window en este caso)
+            maullarFlecha: () => {
+                return `El gato se llama: ${this.nombre}`;
+            }
+        };
+
+        function probarThisNormal() {
+            log("--- Contexto Clásico ---");
+            const res = gato.maullar();
+            log(res, 'result');
+            log("✅ Funciona porque 'function' crea su propio contexto.");
+        }
+
+        function probarThisFlecha() {
+            log("--- Contexto Flecha ---");
+            const res = gato.maullarFlecha();
+            log(res, 'error'); // Mostrará undefined
+            log("⚠️ 'this.nombre' es undefined.");
+            log("EXPLICACIÓN: La flecha buscó 'this' afuera del objeto (en window), y window no tiene propiedad 'nombre'.");
+        }
+
+    </script>
+</body>
+
+</html>

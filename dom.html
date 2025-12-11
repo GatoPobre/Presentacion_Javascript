@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entendiendo el DOM con JS</title>
+    <style>
+        /* ESTILOS GENERALES (UI del Tutorial) */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* PANELES */
+        .control-panel {
+            flex: 1;
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .visual-panel {
+            flex: 1;
+            background: #fff;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 10px solid #333;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #61dafb;
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            border-bottom: 2px solid #444;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            color: #e0e0e0;
+        }
+
+        p {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin: 0 0 10px 0;
+        }
+
+        /* BOTONES DE CONTROL */
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: monospace;
+        }
+
+        button:hover {
+            filter: brightness(1.2);
+        }
+
+        .btn-select {
+            background: #0e639c;
+            color: white;
+        }
+
+        .btn-modify {
+            background: #8e44ad;
+            color: white;
+        }
+
+        .btn-create {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #c0392b;
+            color: white;
+        }
+
+        /* CONSOLA VISUAL */
+        .code-log {
+            background: #000;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Consolas', monospace;
+            color: #ce9178;
+            font-size: 0.85rem;
+            margin-top: auto;
+            min-height: 80px;
+            border-top: 1px solid #555;
+        }
+
+        .code-comment {
+            color: #6a9955;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        /* --- LA PÁGINA DE PRUEBA (Dentro del panel blanco) --- */
+        #pagina-web {
+            flex: 1;
+            border: 2px dashed #ccc;
+            padding: 20px;
+            position: relative;
+            border-radius: 8px;
+        }
+
+        /* Elementos del DOM para manipular */
+        .caja {
+            padding: 15px;
+            border: 2px solid #333;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: all 0.5s ease;
+            background: #f9f9f9;
+        }
+
+        .destacado {
+            background-color: #ffd700 !important;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-color: #ff9800;
+        }
+
+        li {
+            padding: 5px;
+            background: #eee;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="control-panel">
+        <h1>Controlador DOM 🎮</h1>
+        <p>El DOM (Document Object Model) es el puente entre JS y el HTML.</p>
+
+        <div>
+            <h2>1. Seleccionar (Acceder)</h2>
+            <p>Antes de cambiar algo, JS debe encontrarlo.</p>
+            <button class="btn-select" onclick="seleccionarTitulo()">
+                <span>document.getElementById('titulo')</span> 🔍
+            </button>
+        </div>
+
+        <div>
+            <h2>2. Modificar (Cambiar Propiedades)</h2>
+            <p>Una vez tienes el objeto, cambias sus atributos.</p>
+            <button class="btn-modify" onclick="cambiarTexto()">
+                <span>.innerText = "..."</span> ✏️
+            </button>
+            <button class="btn-modify" onclick="cambiarEstilo()">
+                <span>.style.backgroundColor</span> 🎨
+            </button>
+            <button class="btn-modify" onclick="toggleClase()">
+                <span>.classList.toggle('destacado')</span> ✨
+            </button>
+        </div>
+
+        <div>
+            <h2>3. Crear y Agregar Nodos</h2>
+            <p>JS puede crear etiquetas nuevas desde cero.</p>
+            <button class="btn-create" onclick="agregarElemento()">
+                <span>document.createElement('li')</span> ➕
+            </button>
+        </div>
+
+        <div>
+            <h2>4. Eliminar Nodos</h2>
+            <button class="btn-delete" onclick="eliminarUltimo()">
+                <span>.remove()</span> 🗑️
+            </button>
+        </div>
+
+        <div class="code-log" id="console">
+            <span class="code-comment">// Aquí verás el código JS ejecutado...</span>
+        </div>
+    </div>
+
+    <div class="visual-panel">
+        <div
+            style="position: absolute; top: 0; left: 0; background: #333; color: white; padding: 2px 10px; font-size: 0.8rem; border-bottom-right-radius: 5px;">
+            Navegador (Vista Usuario)
+        </div>
+
+        <div id="pagina-web">
+            <h1 id="titulo">Hola, soy el DOM</h1>
+
+            <div id="caja-texto" class="caja">
+                <p>Soy un párrafo dentro de un div.</p>
+            </div>
+
+            <ul id="lista">
+                <li>Elemento 1</li>
+                <li>Elemento 2</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Función auxiliar para mostrar el código en el panel negro
+        function mostrarCodigo(comentario, codigo) {
+            const consola = document.getElementById('console');
+            consola.innerHTML = `
+                <span class="code-comment">// ${comentario}</span><br>
+                > ${codigo}
+            `;
+            // Efecto visual rápido
+            consola.style.borderColor = '#fff';
+            setTimeout(() => consola.style.borderColor = '#555', 200);
+        }
+
+        // ==========================================
+        // 1. SELECCIÓN
+        // ==========================================
+        function seleccionarTitulo() {
+            // Paso 1: Seleccionamos el elemento
+            const titulo = document.getElementById('titulo');
+
+            // Visualmente mostramos que lo seleccionamos (borde flash)
+            titulo.style.border = "3px solid blue";
+            setTimeout(() => titulo.style.border = "none", 1000);
+
+            mostrarCodigo("Buscamos la etiqueta con ID 'titulo'", "const el = document.getElementById('titulo');");
+        }
+
+        // ==========================================
+        // 2. MODIFICACIÓN
+        // ==========================================
+        function cambiarTexto() {
+            const caja = document.getElementById('caja-texto');
+
+            // Accedemos a la propiedad .innerHTML o .innerText
+            caja.innerHTML = "<p>¡He sido hackeado por JavaScript! 🤖</p>";
+
+            mostrarCodigo("Cambiamos el contenido HTML interno", "div.innerHTML = '<p>Texto nuevo...</p>';");
+        }
+
+        function cambiarEstilo() {
+            const titulo = document.getElementById('titulo');
+
+            // JS accede al objeto .style (CSS en línea)
+            titulo.style.color = "white";
+            titulo.style.backgroundColor = "#e74c3c";
+            titulo.style.padding = "10px";
+            titulo.style.borderRadius = "5px";
+
+            mostrarCodigo("Modificamos estilos CSS directamente", "el.style.color = 'white';");
+        }
+
+        function toggleClase() {
+            const caja = document.getElementById('caja-texto');
+
+            // La forma moderna: usar classList para añadir/quitar clases CSS
+            caja.classList.toggle('destacado');
+
+            mostrarCodigo("Activamos/Desactivamos una clase CSS", "div.classList.toggle('destacado');");
+        }
+
+        // ==========================================
+        // 3. CREACIÓN (EL PROCESO DE 3 PASOS)
+        // ==========================================
+        function agregarElemento() {
+            const lista = document.getElementById('lista');
+
+            // PASO 1: Crear el objeto en el limbo (memoria)
+            const nuevoLi = document.createElement('li');
+
+            // PASO 2: Configurar el objeto
+            nuevoLi.innerText = "Elemento Nuevo " + (lista.children.length + 1);
+            nuevoLi.style.borderLeft = "5px solid #27ae60"; // Decoración visual
+
+            // PASO 3: Insertarlo en el DOM real
+            lista.appendChild(nuevoLi);
+
+            mostrarCodigo("Creamos un <li> y lo metemos en el <ul>", "lista.appendChild(nuevoLi);");
+        }
+
+        // ==========================================
+        // 4. ELIMINACIÓN
+        // ==========================================
+        function eliminarUltimo() {
+            const lista = document.getElementById('lista');
+
+            if (lista.lastElementChild) {
+                // Eliminamos el hijo
+                lista.removeChild(lista.lastElementChild);
+                mostrarCodigo("Buscamos el último hijo y lo borramos", "lista.removeChild(lista.lastChild);");
+            } else {
+                mostrarCodigo("No hay nada que borrar", "null");
+            }
+        }
+    </script>
+</body>
+
+</html>

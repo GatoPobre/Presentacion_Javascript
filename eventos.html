@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio de Eventos JS</title>
+    <style>
+        /* ESTILOS DE UI (Dark Mode) */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .panel {
+            flex: 1;
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel.console {
+            flex: 0.7;
+            background: #000;
+            font-family: 'Consolas', monospace;
+            border-left: 4px solid #007acc;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #61dafb;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        p {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        /* SECCIÓN 1: BOTONES */
+        .btn {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.1s;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn span {
+            opacity: 0.7;
+            font-size: 0.8rem;
+        }
+
+        /* SECCIÓN 2: MOUSE AREA */
+        .trackpad {
+            height: 100px;
+            background: #2d2d2d;
+            border: 2px dashed #555;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: crosshair;
+            transition: background 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trackpad:hover {
+            border-color: #007acc;
+            background: #252526;
+        }
+
+        .coord-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4ec9b0;
+            pointer-events: none;
+        }
+
+        /* SECCIÓN 3: TECLADO */
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            background: #2d2d2d;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: 2px solid #007acc;
+            border-color: transparent;
+        }
+
+        /* SECCIÓN 4: BUBBLING (Cajas anidadas) */
+        .box {
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .box:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .grandparent {
+            background: #4a148c;
+        }
+
+        .parent {
+            background: #7b1fa2;
+        }
+
+        .child {
+            background: #ea80fc;
+            color: #000;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* CONSOLA VISUAL */
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid #222;
+            font-size: 0.9rem;
+            animation: fadeLeft 0.3s;
+        }
+
+        .log-time {
+            color: #555;
+            font-size: 0.75rem;
+            margin-right: 8px;
+        }
+
+        .tag {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-right: 5px;
+        }
+
+        .tag-click {
+            background: #0e639c;
+            color: white;
+        }
+
+        .tag-mouse {
+            background: #e67e22;
+            color: white;
+        }
+
+        .tag-key {
+            background: #27ae60;
+            color: white;
+        }
+
+        .tag-bubble {
+            background: #8e44ad;
+            color: white;
+        }
+
+        @keyframes fadeLeft {
+            from {
+                opacity: 0;
+                transform: translateX(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="panel">
+        <h1>Eventos JS 🖱️🎹</h1>
+
+        <div>
+            <h2>1. El "Escuchador" (Click)</h2>
+            <p>La forma correcta: <code>addEventListener</code>. Separa JS del HTML.</p>
+            <button id="btn-click" class="btn">
+                Haz Click Aquí
+                <span>event: 'click'</span>
+            </button>
+        </div>
+
+        <div>
+            <h2>2. El Objeto Evento (Mouse)</h2>
+            <p>Pasa el mouse. JS nos da datos gratis: coordenadas X e Y.</p>
+            <div id="mouse-area" class="trackpad">
+                <div class="coord-display">Mueve el mouse aquí</div>
+            </div>
+        </div>
+
+        <div>
+            <h2>3. Eventos de Teclado</h2>
+            <p>Escribe algo. Detectamos qué tecla exacta presionaste.</p>
+            <input type="text" id="input-key" placeholder="Presiona una tecla (ej: Enter, A, Esc)...">
+        </div>
+
+        <div>
+            <h2>4. Bubbling (Propagación)</h2>
+            <p>Haz click en el <strong>Hijo</strong>. Verás que el evento "sube" hacia los padres.</p>
+
+            <div id="grandparent" class="box grandparent">
+                Abuelo (Grandparent)
+                <div id="parent" class="box parent">
+                    Padre (Parent)
+                    <div id="child" class="box child">
+                        Hijo (Click Aquí)
+                    </div>
+                </div>
+            </div>
+
+            <label style="display:flex; align-items:center; margin-top:10px; cursor:pointer;">
+                <input type="checkbox" id="check-stop">
+                <span style="margin-left: 8px; color: #ff6b6b;">Activar stopPropagation() (Frenar evento)</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="panel console">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span style="font-weight:bold; color:#fff;">LOG DE EVENTOS</span>
+            <button onclick="limpiarLog()"
+                style="background:transparent; border:none; color:#888; cursor:pointer;">Borrar 🗑️</button>
+        </div>
+        <div id="console-output">
+            <div class="log-entry" style="color:#666">// Esperando interacción...</div>
+        </div>
+    </div>
+
+    <script>
+        // --- UTILIDAD PARA LOG ---
+        function log(msg, type = 'click') {
+            const output = document.getElementById('console-output');
+            const time = new Date().toLocaleTimeString().split(' ')[0];
+
+            let colorClass = 'tag-click';
+            if (type === 'mouse') colorClass = 'tag-mouse';
+            if (type === 'key') colorClass = 'tag-key';
+            if (type === 'bubble') colorClass = 'tag-bubble';
+
+            const html = `
+                <div class="log-entry">
+                    <span class="log-time">${time}</span>
+                    <span class="tag ${colorClass}">${type}</span>
+                    <span style="color: #ddd;">${msg}</span>
+                </div>
+            `;
+            output.insertAdjacentHTML('afterbegin', html); // Poner al principio
+        }
+        function limpiarLog() { document.getElementById('console-output').innerHTML = ''; }
+
+
+        // ==========================================
+        // 1. CLICK LISTENER
+        // ==========================================
+        const boton = document.getElementById('btn-click');
+
+        // Sintaxis: elemento.addEventListener(evento, funcion)
+        boton.addEventListener('click', function (e) {
+            // 'e' es el objeto evento con toda la info
+            log(`Botón presionado. Tipo: <b>${e.type}</b>`);
+
+            // Efecto visual
+            this.style.backgroundColor = '#27ae60';
+            this.querySelector('span').innerText = "¡Escuchado!";
+            setTimeout(() => {
+                this.style.backgroundColor = '#0e639c';
+                this.querySelector('span').innerText = "event: 'click'";
+            }, 500);
+        });
+
+
+        // ==========================================
+        // 2. MOUSE MOVEMENT (Objeto Evento)
+        // ==========================================
+        const area = document.getElementById('mouse-area');
+        const display = area.querySelector('.coord-display');
+
+        area.addEventListener('mousemove', (e) => {
+            // e.offsetX / e.offsetY nos da la posición dentro del div
+            const x = e.offsetX;
+            const y = e.offsetY;
+
+            display.innerText = `X: ${x} | Y: ${y}`;
+
+            // Truco visual: cambiar color fondo sutilmente según posición
+            area.style.background = `rgb(40, ${x % 100}, ${y % 100})`;
+
+            // Logueamos solo a veces para no saturar
+            if (x % 50 === 0) log(`Mouse en X: ${x}, Y: ${y}`, 'mouse');
+        });
+
+        area.addEventListener('mouseleave', () => {
+            display.innerText = "Mueve el mouse aquí";
+            area.style.background = "#2d2d2d";
+        });
+
+
+        // ==========================================
+        // 3. KEYBOARD EVENTS
+        // ==========================================
+        const input = document.getElementById('input-key');
+
+        input.addEventListener('keydown', (e) => {
+            // e.key = El valor de la tecla (ej: "a", "Enter")
+            // e.code = El código físico (ej: "KeyA", "Enter")
+            log(`Tecla: <b>"${e.key}"</b> (Código: ${e.code})`, 'key');
+
+            if (e.key === 'Enter') {
+                log("¡Presionaste ENTER! Formulario enviado (simulado).", 'key');
+                input.value = ''; // Limpiar input
+            }
+        });
+
+
+        // ==========================================
+        // 4. EVENT BUBBLING (Propagación)
+        // ==========================================
+        const grand = document.getElementById('grandparent');
+        const parent = document.getElementById('parent');
+        const child = document.getElementById('child');
+        const checkbox = document.getElementById('check-stop');
+
+        // Función generadora de listeners
+        function setupBubbling(element, name) {
+            element.addEventListener('click', (e) => {
+
+                // Verificar si debemos detener la propagación
+                if (checkbox.checked && name === 'Hijo') {
+                    e.stopPropagation(); // <--- AQUÍ OCURRE LA MAGIA
+                    log(`🛑 <b>${name}</b> detuvo la propagación.`, 'bubble');
+                } else {
+                    log(`Evento detectado en: <b>${name}</b>`, 'bubble');
+                }
+
+                // Efecto visual (flash borde)
+                element.style.borderColor = "#fff";
+                setTimeout(() => element.style.borderColor = "rgba(255,255,255,0.1)", 300);
+            });
+        }
+
+        // JS por defecto usa Bubbling (de adentro hacia afuera)
+        setupBubbling(grand, 'Abuelo');
+        setupBubbling(parent, 'Padre');
+        setupBubbling(child, 'Hijo');
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master en Debugging JS</title>
+    <style>
+        /* UI Estilo Dark Mode */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #202124;
+            color: #fff;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .panel {
+            background: #2d2e30;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #3c4043;
+        }
+
+        .panel h2 {
+            color: #8ab4f8;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Cajas de instrucciones */
+        .instruction {
+            background: #3c4043;
+            padding: 10px;
+            border-left: 4px solid #fbbc04;
+            color: #e8eaed;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        /* Inputs y Botones */
+        input {
+            background: #171717;
+            border: 1px solid #5f6368;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            width: 60px;
+            text-align: center;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-bug {
+            background: #e37400;
+            color: white;
+        }
+
+        /* Naranja para bugs */
+        .btn-debug {
+            background: #1e8e3e;
+            color: white;
+        }
+
+        /* Verde para debug */
+        .btn-console {
+            background: #1a73e8;
+            color: white;
+        }
+
+        /* Azul para consola */
+
+        button:hover {
+            filter: brightness(1.2);
+        }
+
+        /* Consola Simulada */
+        .console-box {
+            background: #000;
+            color: #fff;
+            font-family: 'Consolas', monospace;
+            padding: 15px;
+            border-radius: 8px;
+            height: 100%;
+            overflow-y: auto;
+            border: 1px solid #5f6368;
+        }
+
+        .log-line {
+            border-bottom: 1px solid #333;
+            padding: 4px 0;
+        }
+
+        .log-obj {
+            color: #a8c7fa;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Depuración (Debugging) 🐞</h1>
+
+        <div class="panel">
+            <h2>1. El Bug "Clásico"</h2>
+            <div class="instruction">
+                <strong>Misión:</strong> Sumar 5 + 5. <br>
+                1. Pon un 5 en cada caja.<br>
+                2. Pulsa "Sumar".<br>
+                3. Observa el error fatal.
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="number" id="num1" value="5">
+                <span>+</span>
+                <input type="number" id="num2" value="5">
+                <button class="btn-bug" onclick="sumarConBug()">Calcular Suma</button>
+            </div>
+            <p id="resultado-suma" style="font-size: 1.2rem; font-weight: bold; color: #e37400;">Resultado: ?</p>
+        </div>
+
+        <div class="panel">
+            <h2>2. La palabra mágica `debugger;`</h2>
+            <div class="instruction">
+                <strong>Instrucción:</strong> <br>
+                1. Asegúrate de tener la consola abierta (F12).<br>
+                2. Pulsa el botón verde.<br>
+                3. El navegador se <strong>CONGELARÁ</strong> (Pausará).<br>
+                4. Pasa el mouse sobre las variables en la pestaña "Sources" para ver sus valores.
+            </div>
+            <button class="btn-debug" onclick="sumarConDebugger()">🕵️ Iniciar Debugging</button>
+        </div>
+
+        <div class="panel">
+            <h2>3. Más allá del console.log</h2>
+            <p>Mira tu consola real (F12) al pulsar estos botones.</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-console" onclick="consoleTable()">console.table()</button>
+                <button class="btn-console" onclick="consoleTime()">console.time()</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="margin-bottom: 5px; color: #aaa;">Salida (Simulada):</div>
+        <div id="fake-console" class="console-box">
+            <div class="log-line" style="color: #888">// Los logs aparecerán aquí...</div>
+        </div>
+    </div>
+
+    <script>
+        function log(msg, color = "white") {
+            const c = document.getElementById('fake-console');
+            c.innerHTML += `<div class="log-line" style="color:${color}">> ${msg}</div>`;
+            c.scrollTop = c.scrollHeight;
+        }
+
+        // ==========================================
+        // 1. EL CÓDIGO CON BUG
+        // ==========================================
+        function sumarConBug() {
+            // ERROR COMÚN: Los inputs de HTML siempre devuelven TEXTO (String), no números.
+            let a = document.getElementById('num1').value;
+            let b = document.getElementById('num2').value;
+
+            let resultado = a + b; // "5" + "5" = "55"
+
+            document.getElementById('resultado-suma').innerText = "Resultado: " + resultado;
+            log(`Suma realizada: ${a} + ${b} = "${resultado}"`, "#e37400");
+            log("¿Ves el error? Es texto, no número.", "#e37400");
+        }
+
+        // ==========================================
+        // 2. EL CÓDIGO CON DEBUGGER
+        // ==========================================
+        function sumarConDebugger() {
+            log("🛑 Iniciando depuración... Mira tu herramienta de desarrollador.", "#1e8e3e");
+
+            let a = document.getElementById('num1').value;
+            let b = document.getElementById('num2').value;
+
+            // --- AQUÍ ESTÁ LA MAGIA ---
+            // Esta línea obliga al navegador a pausar, como si hubieras puesto un punto rojo manual.
+            debugger;
+
+            // SI ESTÁS EN PAUSA, LEE ESTO:
+            // 1. Pasa el mouse sobre la variable 'a'. Verás que dice "5" (con comillas).
+            // 2. Eso te confirma que es un String.
+            // 3. Mira la corrección abajo: usamos parseInt() o Number().
+
+            let numeroA = parseInt(a);
+            let numeroB = parseInt(b);
+            let sumaCorrecta = numeroA + numeroB;
+
+            alert(`La suma correcta inspeccionada es: ${sumaCorrecta}`);
+            log(`Suma corregida tras debug: ${sumaCorrecta}`, "#1e8e3e");
+        }
+
+        // ==========================================
+        // 3. TRUCOS DE CONSOLA
+        // ==========================================
+        function consoleTable() {
+            const usuarios = [
+                { id: 1, nombre: "Ana", rol: "Admin" },
+                { id: 2, nombre: "Luis", rol: "Editor" },
+                { id: 3, nombre: "Eva", rol: "User" }
+            ];
+
+            console.table(usuarios); // Muestra una tabla hermosa en la consola real
+
+            log("He ejecutado console.table(usuarios).", "#8ab4f8");
+            log("¡Mira tu consola real (F12) para ver la tabla mágica!", "#8ab4f8");
+        }
+
+        function consoleTime() {
+            console.time("Cronometro"); // Inicia reloj
+
+            // Simulamos una tarea pesada
+            for (let i = 0; i < 1000000; i++) {
+                // haciendo nada...
+            }
+
+            console.timeEnd("Cronometro"); // Para reloj y muestra cuánto tardó
+
+            log("He ejecutado console.time(). Mira la consola real para ver cuántos milisegundos tardó el bucle.", "#8ab4f8");
+        }
+
+    </script>
+</body>
+
+</html>

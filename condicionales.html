@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo If / Else If / Else</title>
+    <style>
+        /* ESTILOS (Dark Mode) */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #61dafb;
+            margin-top: 0;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #2d2d2d;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #1177bb;
+        }
+
+        /* Caja de resultados */
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #000;
+            border: 1px dashed #444;
+            min-height: 40px;
+        }
+
+        /* Colores para el feedback visual */
+        .success {
+            color: #4ec9b0;
+            border-color: #4ec9b0;
+        }
+
+        /* Verde */
+        .warning {
+            color: #dcdcaa;
+            border-color: #dcdcaa;
+        }
+
+        /* Amarillo */
+        .danger {
+            color: #f44336;
+            border-color: #f44336;
+        }
+
+        /* Rojo */
+
+        .code-snippet {
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h1>Calificador 📝</h1>
+        <p>Introduce tu nota (0 - 100):</p>
+
+        <input type="number" id="inputNota" placeholder="Ej: 85">
+        <button onclick="evaluarNota()">Evaluar</button>
+
+        <div id="resultado" class="result-box">
+            Esperando nota...
+        </div>
+    </div>
+
+    <script>
+        function evaluarNota() {
+            // 1. Obtenemos el valor y lo convertimos a Número
+            const nota = parseInt(document.getElementById('inputNota').value);
+            const caja = document.getElementById('resultado');
+
+            // Limpiamos clases anteriores
+            caja.className = 'result-box';
+
+            // --- LÓGICA DE CONDICIONALES ---
+
+            // CASO 1: Validación de errores (IF)
+            // Si no es un número O es menor que 0 O mayor que 100...
+            if (isNaN(nota) || nota < 0 || nota > 100) {
+                caja.innerHTML = "❌ Error: Ingresa un número válido entre 0 y 100.";
+                caja.classList.add('danger'); // Pone texto rojo
+                return; // Detiene la función aquí
+            }
+
+            // CASO 2: Nota excelente (ELSE IF)
+            // Se ejecuta solo si el IF anterior fue falso
+            else if (nota >= 90) {
+                caja.innerHTML = "🏆 ¡Excelente! Has sacado una nota perfecta.";
+                caja.innerHTML += `<span class='code-snippet'>Entró en: else if (nota >= 90)</span>`;
+                caja.classList.add('success'); // Pone texto verde
+            }
+
+            // CASO 3: Nota aprobatoria (ELSE IF)
+            // Se ejecuta solo si los anteriores fueron falsos
+            else if (nota >= 60) {
+                caja.innerHTML = "✅ Aprobado. Buen trabajo, pero puedes mejorar.";
+                caja.innerHTML += `<span class='code-snippet'>Entró en: else if (nota >= 60)</span>`;
+                caja.classList.add('warning'); // Pone texto amarillo
+            }
+
+            // CASO 4: Reprobado (ELSE)
+            // Se ejecuta si NINGUNA de las condiciones anteriores se cumplió
+            else {
+                caja.innerHTML = "💀 Reprobado. Necesitas estudiar más.";
+                caja.innerHTML += `<span class='code-snippet'>Entró en: else (todo lo demás falló)</span>`;
+                caja.classList.add('danger'); // Pone texto rojo
+            }
+        }
+    </script>
+</body>
+
+</html>

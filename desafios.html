@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dojo JS: 10 Desafíos Trainee</title>
+    <style>
+        /* UI TEMA OSCURO */
+        :root {
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #e0e0e0;
+            --accent: #61dafb;
+            --success: #4caf50;
+            --fail: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+
+        p.intro {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+
+        /* Tarjeta de Desafío */
+        .challenge-card {
+            background: var(--card);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .challenge-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .badge {
+            background: #333;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        /* Editor de Código */
+        .editor-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        textarea {
+            background: #000;
+            color: #a5b3ce;
+            font-family: 'Consolas', monospace;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+        }
+
+        /* Controles */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-run {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .btn-run:hover {
+            background: #4fa8d1;
+        }
+
+        .btn-solution {
+            background: transparent;
+            color: #666;
+            border: 1px solid #444;
+        }
+
+        .btn-solution:hover {
+            border-color: #888;
+            color: #aaa;
+        }
+
+        /* Consola de Resultados */
+        .result-box {
+            margin-top: 15px;
+            background: #0a0a0a;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .pass {
+            color: var(--success);
+        }
+
+        .fail {
+            color: var(--fail);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Solución */
+        .solution-code {
+            margin-top: 10px;
+            background: #2d2d2d;
+            padding: 10px;
+            border-radius: 4px;
+            color: #9cdcfe;
+            font-family: monospace;
+            display: none;
+            border-left: 3px solid var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🥋 Dojo JS: 10 Desafíos Trainee</h1>
+        <p class="intro">Completa las funciones dentro del editor. No cambies el nombre de la función ni los argumentos.
+        </p>
+
+        <div id="challenges-container">
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // BASE DE DATOS DE DESAFÍOS
+        // ==========================================
+        const desafios = [
+            {
+                id: 1,
+                titulo: "1. Hola Mundo",
+                desc: "Completa la función para que retorne exactamente el string <code>'Hola Mundo'</code>.",
+                template: "function saludar() {\n  // Tu código aquí\n  \n}",
+                tests: [{ args: [], expected: "Hola Mundo" }],
+                solucion: "return 'Hola Mundo';"
+            },
+            {
+                id: 2,
+                titulo: "2. Suma Básica",
+                desc: "Retorna la suma de los parámetros <code>a</code> y <code>b</code>.",
+                template: "function sumar(a, b) {\n  \n}",
+                tests: [{ args: [2, 3], expected: 5 }, { args: [10, -5], expected: 5 }],
+                solucion: "return a + b;"
+            },
+            {
+                id: 3,
+                titulo: "3. ¿Es Par?",
+                desc: "Retorna <code>true</code> si el número <code>n</code> es par, o <code>false</code> si es impar. (Usa el operador módulo %)",
+                template: "function esPar(n) {\n  \n}",
+                tests: [{ args: [4], expected: true }, { args: [7], expected: false }],
+                solucion: "return n % 2 === 0;"
+            },
+            {
+                id: 4,
+                titulo: "4. Control de Edad",
+                desc: "Si <code>edad</code> es mayor o igual a 18, retorna 'Entra'. Si no, retorna 'Espera'.",
+                template: "function portero(edad) {\n  \n}",
+                tests: [{ args: [20], expected: "Entra" }, { args: [15], expected: "Espera" }],
+                solucion: "if (edad >= 18) { return 'Entra'; } else { return 'Espera'; }"
+            },
+            {
+                id: 5,
+                titulo: "5. Longitud del Texto",
+                desc: "Retorna la cantidad de caracteres que tiene el texto recibido.",
+                template: "function contarCaracteres(texto) {\n  \n}",
+                tests: [{ args: ["Hola"], expected: 4 }, { args: ["JavaScript"], expected: 10 }],
+                solucion: "return texto.length;"
+            },
+            {
+                id: 6,
+                titulo: "6. Último Elemento",
+                desc: "Retorna el <b>último</b> elemento del array recibido. (Recuerda que los índices empiezan en 0).",
+                template: "function obtenerUltimo(array) {\n  \n}",
+                tests: [{ args: [[1, 2, 3]], expected: 3 }, { args: [["A", "B", "C"]], expected: "C" }],
+                solucion: "return array[array.length - 1];"
+            },
+            {
+                id: 7,
+                titulo: "7. A Mayúsculas",
+                desc: "Retorna el texto convertido todo a MAYÚSCULAS.",
+                template: "function gritar(texto) {\n  \n}",
+                tests: [{ args: ["hola"], expected: "HOLA" }, { args: ["test"], expected: "TEST" }],
+                solucion: "return texto.toUpperCase();"
+            },
+            {
+                id: 8,
+                titulo: "8. Sumatoria (Bucle)",
+                desc: "Usa un bucle (for o while) para sumar todos los números desde 1 hasta <code>n</code> y retornar el total.",
+                template: "function sumatoria(n) {\n  let total = 0;\n  // Tu bucle aquí\n  \n  return total;\n}",
+                tests: [{ args: [3], expected: 6 }, { args: [5], expected: 15 }], // 1+2+3=6, 1+2+3+4+5=15
+                solucion: "for(let i=1; i<=n; i++) { total += i; } return total;"
+            },
+            {
+                id: 9,
+                titulo: "9. Propiedad de Objeto",
+                desc: "La función recibe un objeto <code>usuario</code>. Retorna su propiedad <code>email</code>.",
+                template: "function obtenerEmail(usuario) {\n  \n}",
+                tests: [{ args: [{ nombre: "Ana", email: "ana@test.com" }], expected: "ana@test.com" }],
+                solucion: "return usuario.email;"
+            },
+            {
+                id: 10,
+                titulo: "10. FizzBuzz Mini",
+                desc: "Si el número es divisible por 3 retorna 'Fizz'. Si no, retorna el mismo número.",
+                template: "function fizz(n) {\n  \n}",
+                tests: [{ args: [3], expected: "Fizz" }, { args: [9], expected: "Fizz" }, { args: [4], expected: 4 }],
+                solucion: "if (n % 3 === 0) return 'Fizz'; return n;"
+            }
+        ];
+
+        // ==========================================
+        // RENDERIZADO
+        // ==========================================
+        const container = document.getElementById('challenges-container');
+
+        desafios.forEach(d => {
+            const html = `
+                <div class="challenge-card" id="card-${d.id}">
+                    <div class="challenge-header">
+                        <span class="challenge-title">${d.titulo}</span>
+                        <span class="badge">Reto #${d.id}</span>
+                    </div>
+                    <p style="color:#ccc; font-size:0.95rem; margin-bottom:15px;">${d.desc}</p>
+                    
+                    <div class="editor-area">
+                        <textarea id="code-${d.id}" spellcheck="false">${d.template}</textarea>
+                    </div>
+
+                    <div class="result-box" id="result-${d.id}"></div>
+                    <div class="solution-code" id="sol-${d.id}">Solución sugerida:<br>${d.solucion}</div>
+
+                    <div class="controls">
+                        <button class="btn-solution" onclick="toggleSolution(${d.id})">💡 Ver Solución</button>
+                        <button class="btn-run" onclick="runTest(${d.id})">▶ Ejecutar Pruebas</button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+
+        // ==========================================
+        // LÓGICA DE EJECUCIÓN
+        // ==========================================
+
+        // Permite usar TAB en los textareas
+        document.querySelectorAll('textarea').forEach(el => {
+            el.addEventListener('keydown', function (e) {
+                if (e.key == 'Tab') {
+                    e.preventDefault();
+                    var start = this.selectionStart;
+                    var end = this.selectionEnd;
+                    this.value = this.value.substring(0, start) + "  " + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 2;
+                }
+            });
+        });
+
+        function toggleSolution(id) {
+            const solBox = document.getElementById(`sol-${id}`);
+            solBox.style.display = solBox.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function runTest(id) {
+            const desafio = desafios.find(d => d.id === id);
+            const userCode = document.getElementById(`code-${id}`).value;
+            const resultBox = document.getElementById(`result-${id}`);
+
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = '⏳ Ejecutando...';
+
+            try {
+                // Truco de magia: Creamos la función del usuario dinámicamente
+                // Envolvemos el código del usuario para que sea el cuerpo de una función
+                // Nota: Esto usa 'new Function' o 'eval' implícito, seguro solo en entorno local/educativo.
+
+                // Extraemos el nombre de la función esperada del template original (ej: "sumar")
+                const matchNombre = desafio.template.match(/function\s+(\w+)/);
+                const funcName = matchNombre ? matchNombre[1] : 'anon';
+
+                // Evaluamos el código del usuario en el contexto global para crear la función
+                // Usamos una función autoejecutable para aislar errores básicos
+                const createFunction = new Function(userCode + `; return ${funcName};`);
+                const userFunc = createFunction();
+
+                if (typeof userFunc !== 'function') {
+                    throw new Error("No se encontró la función. Asegúrate de no borrar el nombre 'function " + funcName + "'.");
+                }
+
+                // Corremos los tests
+                let allPassed = true;
+                let log = "";
+
+                desafio.tests.forEach((test, index) => {
+                    let result;
+                    try {
+                        // Pasamos los argumentos usando spread operator (...)
+                        result = userFunc(...test.args);
+                    } catch (err) {
+                        result = "Error: " + err.message;
+                    }
+
+                    // Comparamos resultado (JSON.stringify para arrays/objetos)
+                    const isCorrect = JSON.stringify(result) === JSON.stringify(test.expected);
+
+                    if (isCorrect) {
+                        log += `<div class="pass">✔ Test ${index + 1}: Correcto (Input: ${JSON.stringify(test.args)} -> Output: ${JSON.stringify(result)})</div>`;
+                    } else {
+                        allPassed = false;
+                        log += `<div class="fail">✘ Test ${index + 1}: Falló. Esperaba ${JSON.stringify(test.expected)}, recibió ${JSON.stringify(result)}</div>`;
+                    }
+                });
+
+                if (allPassed) {
+                    log += `<div style="margin-top:10px; color:#61dafb; font-weight:bold;">✨ ¡Excelente! Has pasado el desafío.</div>`;
+                    document.getElementById(`card-${id}`).style.borderColor = "#4caf50";
+                } else {
+                    document.getElementById(`card-${id}`).style.borderColor = "#f44336";
+                }
+
+                resultBox.innerHTML = log;
+
+            } catch (e) {
+                resultBox.innerHTML = `<div class="fail">☠ Error de Sintaxis: ${e.message}</div>`;
+                document.getElementById(`card-${id}`).style.borderColor = "#f44336";
+            }
+        }
+
+    </script>
+</body>
+
+</html>

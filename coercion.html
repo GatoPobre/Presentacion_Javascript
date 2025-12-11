@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master en Coerción JS</title>
+    <style>
+        /* Estilos Base Dark Mode */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .left-panel {
+            flex: 6;
+            padding: 30px;
+            overflow-y: auto;
+            background: #1e1e1e;
+        }
+
+        .right-panel {
+            flex: 4;
+            background-color: #0d0d0d;
+            border-left: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tipografía y Componentes */
+        h1 {
+            color: #ffd700;
+            margin-top: 0;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #4fc1ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p {
+            color: #aaa;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        /* Tarjetas */
+        .card {
+            background: #252526;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            border-color: #555;
+        }
+
+        /* Código */
+        .code-block {
+            background: #000;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: 'Consolas', monospace;
+            color: #d4d4d4;
+            margin-bottom: 15px;
+            border-left: 4px solid #007acc;
+        }
+
+        .str {
+            color: #ce9178;
+        }
+
+        .num {
+            color: #b5cea8;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .op {
+            color: #d4d4d4;
+        }
+
+        /* Botones */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Segoe UI', sans-serif;
+            transition: 0.2s;
+        }
+
+        .btn-run {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-run:hover {
+            background-color: #218838;
+        }
+
+        .btn-warn {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-warn:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-bad {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-bad:hover {
+            background-color: #c82333;
+        }
+
+        .btn-clear {
+            background: transparent;
+            color: #888;
+            border: 1px solid #333;
+        }
+
+        .btn-clear:hover {
+            border-color: #aaa;
+            color: #aaa;
+        }
+
+        /* Consola Visual */
+        .console-header {
+            padding: 10px 15px;
+            background: #252526;
+            color: #ccc;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .console-output {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+        }
+
+        /* Items del Log */
+        .log-item {
+            margin-bottom: 12px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 8px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .log-code {
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .log-result {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .type-tag {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .type-string {
+            background: #ce9178;
+            color: #000;
+        }
+
+        .type-number {
+            background: #b5cea8;
+            color: #000;
+        }
+
+        .type-boolean {
+            background: #569cd6;
+            color: #fff;
+        }
+
+        .log-note {
+            color: #666;
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="left-panel">
+        <h1>Coerción en JavaScript 🎭</h1>
+        <p>La coerción es la conversión automática o manual de tipos de datos. JS intenta "ayudarte", pero a veces crea
+            caos.</p>
+
+        <div class="card">
+            <h2>1. El traidor operador (+)</h2>
+            <p>Si hay un <strong>String</strong> involucrado, JS prefiere concatenar (pegar texto) antes que sumar.</p>
+            <div class="code-block">
+                <span class="keyword">var</span> a = <span class="num">10</span> <span class="op">+</span> <span
+                    class="str">"20"</span>;
+            </div>
+            <div class="btn-group">
+                <button class="btn-warn" onclick="testSumString()">👉 Probar 10 + "20"</button>
+                <button class="btn-warn" onclick="testSumStringReverse()">👉 Probar "Hello" + 5</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>2. Operadores Matemáticos (-, *, /)</h2>
+            <p>A diferencia del <code>+</code>, estos operadores <strong>siempre</strong> intentan convertir los textos
+                a Números.</p>
+            <div class="code-block">
+                <span class="keyword">var</span> b = <span class="str">"10"</span> <span class="op">-</span> <span
+                    class="num">5</span>;
+            </div>
+            <div class="btn-group">
+                <button class="btn-run" onclick="testRest()">👉 Probar "10" - 5</button>
+                <button class="btn-run" onclick="testMult()">👉 Probar "5" * "5"</button>
+                <button class="btn-bad" onclick="testNaN()">👉 Probar "Hola" - 2 (NaN)</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>3. La Gran Batalla: == vs ===</h2>
+            <p>
+                <code>==</code> (Loose): Convierte tipos antes de comparar.<br>
+                <code>===</code> (Strict): NO convierte nada. Es más seguro.
+            </p>
+            <div class="code-block">
+                <span class="num">5</span> <span class="op">==</span> <span class="str">"5"</span> <span
+                    class="keyword">// ?</span><br>
+                <span class="num">5</span> <span class="op">===</span> <span class="str">"5"</span> <span
+                    class="keyword">// ?</span>
+            </div>
+            <div class="btn-group">
+                <button class="btn-warn" onclick="testLoose()">Probar Doble (==)</button>
+                <button class="btn-run" onclick="testStrict()">Probar Triple (===)</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="console-header">
+            <span>🖥️ CONSOLA VIRTUAL</span>
+            <button class="btn-clear" onclick="clearConsole()">Limpiar</button>
+        </div>
+        <div class="console-output" id="consoleOutput">
+            <div class="log-note" style="text-align: center; margin-top: 20px;">
+                Presiona un botón a la izquierda para ver el resultado aquí.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función auxiliar para imprimir en nuestra consola HTML
+        function log(codeText, result, note) {
+            const output = document.getElementById('consoleOutput');
+            const type = typeof result;
+
+            // Determinar color de la etiqueta según el tipo
+            let typeClass = 'type-string';
+            if (type === 'number') typeClass = 'type-number';
+            if (type === 'boolean') typeClass = 'type-boolean';
+
+            // Si es string, ponerle comillas visuales
+            let displayResult = result;
+            if (type === 'string') displayResult = `"${result}"`;
+
+            // Construir el HTML del log
+            const logHTML = `
+                <div class="log-item">
+                    <div class="log-code">> ${codeText}</div>
+                    <div class="log-result">
+                        <span style="color:#aaa">Resultado:</span>
+                        <span style="font-size: 1.1em; color: white;">${displayResult}</span>
+                        <span class="type-tag ${typeClass}">${type}</span>
+                    </div>
+                    <div class="log-note">// ${note}</div>
+                </div>
+            `;
+
+            // Si es el primer mensaje, borrar el texto de bienvenida
+            if (output.innerHTML.includes('Presiona un botón')) {
+                output.innerHTML = '';
+            }
+
+            output.innerHTML += logHTML;
+            output.scrollTop = output.scrollHeight; // Auto-scroll al final
+        }
+
+        function clearConsole() {
+            document.getElementById('consoleOutput').innerHTML = `
+                <div class="log-note" style="text-align: center; margin-top: 20px;">
+                    Consola limpia. Esperando ejecución...
+                </div>
+            `;
+        }
+
+        // --- FUNCIONES DE PRUEBA ---
+
+        function testSumString() {
+            const res = 10 + "20";
+            log('10 + "20"', res, 'El número se convierte a string y se concatena.');
+        }
+
+        function testSumStringReverse() {
+            const res = "Hello" + 5;
+            log('"Hello" + 5', res, 'Da igual el orden, si hay string, gana la concatenación.');
+        }
+
+        function testRest() {
+            const res = "10" - 5;
+            log('"10" - 5', res, 'El menos (-) fuerza al string "10" a ser número.');
+        }
+
+        function testMult() {
+            const res = "5" * "5";
+            log('"5" * "5"', res, 'Multiplicación convierte ambos strings a números.');
+        }
+
+        function testNaN() {
+            const res = "Hola" - 2;
+            log('"Hola" - 2', res, 'No se puede convertir "Hola" a número, resulta NaN (Not a Number).');
+        }
+
+        function testLoose() {
+            const res = (5 == "5");
+            log('5 == "5"', res, 'True porque == convierte el texto "5" a número 5 antes de comparar.');
+        }
+
+        function testStrict() {
+            const res = (5 === "5");
+            log('5 === "5"', res, 'False porque === revisa tipos. Número NO es igual a String.');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Evitando NaN en JavaScript</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #f4f4f9;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            padding: 10px;
+            width: 70%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        code {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="box">
+        <h2>Calculadora de IVA</h2>
+        <p>Ingresa un precio (Intenta escribir texto como "hola" para ver el error):</p>
+
+        <input type="text" id="inputPrecio" placeholder="Ej: 1000">
+        <button onclick="calcularIVA()">Calcular</button>
+
+        <div id="mensajeResultado"></div>
+    </div>
+
+    <script>
+        function calcularIVA() {
+            // 1. Obtenemos el valor del input (siempre llega como String)
+            const valorInput = document.getElementById('inputPrecio').value;
+            const resultadoDiv = document.getElementById('mensajeResultado');
+
+            // 2. Intentamos convertirlo a Número explícitamente
+            // Si valorInput es "hola", precioSeria se convierte en NaN
+            const numeroPrecio = Number(valorInput);
+
+            console.log("Valor convertido:", numeroPrecio); // Ver en consola (F12)
+
+            // 3. VALIDACIÓN: Preguntamos ¿Es esto NaN?
+            // isNaN() devuelve true si el valor NO es un número válido
+            if (isNaN(numeroPrecio) || valorInput === "") {
+
+                resultadoDiv.innerHTML = `<p class="error">❌ Error: "${valorInput}" no es un número válido. Obvtuve <code>NaN</code>.</p>`;
+
+            } else {
+
+                // Si llegamos aquí, es un número seguro
+                const iva = numeroPrecio * 0.19;
+                const total = numeroPrecio + iva;
+                resultadoDiv.innerHTML = `<p class="success">✅ Precio: $${numeroPrecio} <br> + IVA: $${iva} <br> = Total: $${total}</p>`;
+            }
+        }
+    </script>
+
+</body>
+
+</html>
